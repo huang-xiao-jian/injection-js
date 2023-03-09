@@ -135,7 +135,9 @@ function resolveReflectiveProvider(provider: NormalizedProvider): ResolvedReflec
  * Resolve a list of Providers.
  */
 export function resolveReflectiveProviders(providers: Provider[]): ResolvedReflectiveProvider[] {
+  // NormalizeProvider 作用于接入层，标准化 Provider 结构
   const normalized = _normalizeProviders(providers, []);
+  // 解析物料工厂函数，函数 + 函数依赖
   const resolved = normalized.map(resolveReflectiveProvider);
   const resolvedProviderMap = mergeResolvedReflectiveProviders(resolved, new Map());
   return Array.from(resolvedProviderMap.values());
@@ -167,6 +169,7 @@ export function mergeResolvedReflectiveProviders(
     } else {
       let resolvedProvider: ResolvedReflectiveProvider;
       if (provider.multiProvider) {
+        // 后续合并动作不应该影响原始的 ReflectiveProvider，因而需要进行浅克隆，务必注意
         resolvedProvider = new ResolvedReflectiveProvider_(provider.key, provider.resolvedFactories.slice(), provider.multiProvider);
       } else {
         resolvedProvider = provider;
@@ -193,15 +196,22 @@ function _normalizeProviders(providers: Provider[], res: Provider[]): Normalized
   return res as NormalizedProvider[];
 }
 
+/**
+ * Factory 提取依赖
+ */
 export function constructDependencies(typeOrFunc: any, dependencies?: any[]): ReflectiveDependency[] {
   if (!dependencies) {
     return _dependenciesFor(typeOrFunc);
   } else {
+    // TODO - 为什么转化为数组
     const params: any[][] = dependencies.map((t) => [t]);
     return dependencies.map((t) => _extractToken(typeOrFunc, t, params));
   }
 }
 
+/**
+ * Class 类提取依赖
+ */
 function _dependenciesFor(typeOrFunc: any): ReflectiveDependency[] {
   const params = reflector.parameters(typeOrFunc);
 

@@ -452,6 +452,10 @@ export class ReflectiveInjector_ implements ReflectiveInjector {
       if (obj !== UNDEFINED) return obj;
       inj = inj_._parent;
     }
+
+    /**
+     * 待确认：非反射式依赖注入器，猜测为 NullInjector，参考依赖注入层级关系
+     */
     if (inj !== null) {
       return inj.get(key.token, notFoundValue);
     } else {

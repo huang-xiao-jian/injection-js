@@ -32,7 +32,7 @@ import { Type } from './facade/type';
  *
  * @stable
  */
-export type TypeProvider = Type<any>;
+export type TypeProvider = Type<any>; // 实质上为 ES Flavor Class
 
 /**
  * @whatItDoes Configures the {@link Injector} to return a value for a token.
