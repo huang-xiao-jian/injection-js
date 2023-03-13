@@ -216,6 +216,9 @@ function _dependenciesFor(typeOrFunc: any): ReflectiveDependency[] {
   const params = reflector.parameters(typeOrFunc);
 
   if (!params) return [];
+  /**
+   * 强制要求构造函数参数必须存在注解，避免难以调试的问题
+   */
   if (params.some((p) => p == null)) {
     throw noAnnotationError(typeOrFunc, params);
   }
@@ -226,6 +229,9 @@ function _extractToken(typeOrFunc: any, metadata: any[] | any, params: any[][]):
   let token: any = null;
   let optional = false;
 
+  /**
+   * 非数组的场景又是什么历史典故，暂且不管了
+   */
   if (!Array.isArray(metadata)) {
     if (metadata instanceof Inject) {
       return _createDependency(metadata['token'], optional, null);
@@ -236,9 +242,15 @@ function _extractToken(typeOrFunc: any, metadata: any[] | any, params: any[][]):
 
   let visibility: Self | SkipSelf | null = null;
 
+    /**
+     * 每一个参数都存在多个注解，需要集中考虑
+     */
   for (let i = 0; i < metadata.length; ++i) {
-    const paramMetadata = metadata[i];
 
+    const paramMetadata = metadata[i];
+/**
+ * 原始类
+ */
     if (paramMetadata instanceof Type) {
       token = paramMetadata;
     } else if (paramMetadata instanceof Inject) {

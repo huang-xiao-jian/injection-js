@@ -254,11 +254,12 @@ export function Class(this: any, clsDef: ClassDefinition): Type<any> {
 
 /**
  * @suppress {globalThis}
+ *
+ * 本质上为创建 Class 装饰器函数，命名语义严重问题
  */
 export function makeDecorator(
   name: string,
   props: { [name: string]: any },
-  parentClass?: any,
   chainFn?: (fn: Function) => void
 ): (...args: any[]) => (cls: any) => any {
   const metaCtor = makeMetadataCtor([props]);
@@ -276,6 +277,7 @@ export function makeDecorator(
     const annotationInstance = new (<any>DecoratorFactory)(objOrType);
     const chainAnnotation = typeof this === 'function' && Array.isArray(this.annotations) ? this.annotations : [];
     chainAnnotation.push(annotationInstance);
+
     const TypeDecorator: TypeDecorator = <TypeDecorator>function TypeDecorator(cls: Type<any>) {
       const annotations = Reflect.getOwnMetadata('annotations', cls) || [];
       annotations.push(annotationInstance);
@@ -288,15 +290,15 @@ export function makeDecorator(
     return TypeDecorator;
   }
 
-  if (parentClass) {
-    DecoratorFactory.prototype = Object.create(parentClass.prototype);
-  }
-
   DecoratorFactory.prototype.toString = () => `@${name}`;
   (<any>DecoratorFactory).annotationCls = DecoratorFactory;
   return DecoratorFactory;
 }
 
+/**
+ * 本质上，metadata 运行阶段与静态声明阶段元信息合并
+ * 字面量对象 metadata 扁平化构造对象上
+ */
 function makeMetadataCtor(props: ([string, any] | { [key: string]: any })[]): any {
   return function ctor(this: any, ...args: any[]) {
     props.forEach((prop, i) => {
@@ -313,18 +315,31 @@ function makeMetadataCtor(props: ([string, any] | { [key: string]: any })[]): an
   };
 }
 
-export function makeParamDecorator(name: string, props: ([string, any] | { [name: string]: any })[], parentClass?: any): any {
+export function makeParamDecorator(name: string, props: ([string, any] | { [name: string]: any })[]): any {
+  // 简化理解为 metadata 对象，预设元信息结构
   const metaCtor = makeMetadataCtor(props);
+
+  /**
+   * 诡异的构造方式，不相关功能强行捆绑，导致理解困难
+   * 强行分析的话，元信息与装饰器函数捆绑，容易进行类型推断
+   */
   function ParamDecoratorFactory(this: unknown, ...args: any[]): any {
+    /**
+     * 运行时元信息合并
+     */
     if (this instanceof ParamDecoratorFactory) {
       metaCtor.apply(this, args);
       return this;
     }
+
+    /**
+     * 构造调用元对象
+     */
     const annotationInstance = new (<any>ParamDecoratorFactory)(...args);
 
-    (<any>ParamDecorator).annotation = annotationInstance;
-    return ParamDecorator;
-
+    /**
+     * 目测只能用在 Construct Function 内部，property name 压根没有
+     */
     function ParamDecorator(cls: any, unusedKey: any, index: number): any {
       const parameters: (any[] | null)[] = Reflect.getOwnMetadata('parameters', cls) || [];
 
@@ -340,36 +355,48 @@ export function makeParamDecorator(name: string, props: ([string, any] | { [name
       Reflect.defineMetadata('parameters', parameters, cls);
       return cls;
     }
+
+    (<any>ParamDecorator).annotation = annotationInstance;
+    return ParamDecorator;
   }
-  if (parentClass) {
-    ParamDecoratorFactory.prototype = Object.create(parentClass.prototype);
-  }
+
   ParamDecoratorFactory.prototype.toString = () => `@${name}`;
   (<any>ParamDecoratorFactory).annotationCls = ParamDecoratorFactory;
+
   return ParamDecoratorFactory;
 }
 
-export function makePropDecorator(name: string, props: ([string, any] | { [key: string]: any })[], parentClass?: any): any {
+export function makePropDecorator(name: string, props: ([string, any] | { [key: string]: any })[]): any {
+  // 简化理解为 metadata 对象，预设元信息结构
   const metaCtor = makeMetadataCtor(props);
 
+  /**
+   * 诡异的构造方式，不相关功能强行捆绑，导致理解困难
+   * 强行分析的话，元信息与装饰器函数捆绑，容易进行类型推断
+   */
   function PropDecoratorFactory(this: unknown, ...args: any[]): any {
+    /**
+     * 运行时元信息合并
+     */
     if (this instanceof PropDecoratorFactory) {
       metaCtor.apply(this, args);
       return this;
     }
 
+    /**
+     * 构造调用元对象
+     */
     const decoratorInstance = new (<any>PropDecoratorFactory)(...args);
 
+    /**
+     * Property 对应 metadata 存储池，存储关联实例
+     */
     return function PropDecorator(target: any, name: string) {
       const meta = Reflect.getOwnMetadata('propMetadata', target.constructor) || {};
       meta[name] = (meta.hasOwnProperty(name) && meta[name]) || [];
       meta[name].unshift(decoratorInstance);
       Reflect.defineMetadata('propMetadata', meta, target.constructor);
     };
-  }
-
-  if (parentClass) {
-    PropDecoratorFactory.prototype = Object.create(parentClass.prototype);
   }
 
   PropDecoratorFactory.prototype.toString = () => `@${name}`;
