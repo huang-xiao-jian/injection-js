@@ -248,6 +248,8 @@ export function outOfBoundsError(index: number) {
  * ```
  */
 
-export function mixingMultiProvidersWithRegularProvidersError(provider1: any, provider2: any): Error {
-  return Error(`Cannot mix multi providers and regular providers, got: ${provider1} ${provider2}`);
+export class MixingMultiProvidersWithRegularProvidersError extends Error {
+  constructor(provider1: any, provider2: any) {
+    super(`Cannot mix multi providers and regular providers, got: ${provider1} ${provider2}`);
+  }
 }

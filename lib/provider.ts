@@ -155,7 +155,7 @@ export interface ExistingProvider {
 }
 
 /**
- * @whatItDoes Configures the {@link Injector} to return a value by invoking a `useFactory`
+ * @whatItDoes Configures the `Injector` to return a value by invoking a `useFactory`
  * function.
  * @howToUse
  * ```
@@ -165,7 +165,7 @@ export interface ExistingProvider {
  * ```
  *
  * @description
- * For more details, see the {@linkDocs guide/dependency-injection "Dependency Injection Guide"}.
+ * For more details, see the {@link Docs guide/dependency-injection "Dependency Injection Guide"}.
  *
  * ### Example
  *
@@ -216,4 +216,44 @@ export interface FactoryProvider {
  *
  * @stable
  */
-export type Provider = TypeProvider | ValueProvider | ClassProvider | ExistingProvider | FactoryProvider | any[];
+export type Provider = TypeProvider | ValueProvider | ClassProvider | ExistingProvider | FactoryProvider;
+
+export type NormalizedProvider = ClassProvider | ValueProvider | FactoryProvider | ExistingProvider;
+
+/* ==================================================== */
+/* =========== Provider shortcut convenience ========== */
+/* ==================================================== */
+export function isClassProvider(cls: NormalizedProvider): cls is ClassProvider {
+  return 'useClass' in cls;
+}
+
+export function isValueProvider(cls: NormalizedProvider): cls is ValueProvider {
+  return 'useValue' in cls;
+}
+
+export function isExistingProvider(cls: NormalizedProvider): cls is ExistingProvider {
+  return 'useExisting' in cls;
+}
+
+export function isFactoryProvider(cls: NormalizedProvider): cls is FactoryProvider {
+  return 'useFactory' in cls;
+}
+
+export class ProviderNormalizer {
+  /**
+   * TODO - InvalidProviderError
+   * TODO - Array<Provider>
+   */
+  static normalize(providers: Provider[]): NormalizedProvider[] {
+    return providers.map((provider) => {
+      if ('provide' in provider) {
+        return provider;
+      }
+
+      return {
+        provide: provider,
+        useClass: provider,
+      };
+    });
+  }
+}

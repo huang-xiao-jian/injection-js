@@ -11,12 +11,9 @@ import { Self, SkipSelf } from './metadata';
 import { Provider } from './provider';
 import { cyclicDependencyError, instantiationError, noProviderError, outOfBoundsError } from './reflective_errors';
 import { ReflectiveKey } from './reflective_key';
-import {
-  ReflectiveDependency,
-  ResolvedReflectiveFactory,
-  ResolvedReflectiveProvider,
-  resolveReflectiveProviders,
-} from './reflective_provider';
+import { ResolvedReflectiveProvider, resolveReflectiveProviders } from './reflective_provider';
+
+import { ReflectiveDependency, ResolvedReflectiveFactory } from './reflective_provider_resolver';
 
 // Threshold for the dynamic version
 const UNDEFINED = new Object();
