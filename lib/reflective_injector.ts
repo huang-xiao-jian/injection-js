@@ -457,7 +457,7 @@ export class ReflectiveInjector_ implements ReflectiveInjector {
      * 待确认：非反射式依赖注入器，猜测为 NullInjector，参考依赖注入层级关系
      */
     if (inj !== null) {
-      return inj.get(key.token, notFoundValue);
+      return inj.get(key.token as any, notFoundValue);
     } else {
       return this._throwOrNull(key, notFoundValue);
     }

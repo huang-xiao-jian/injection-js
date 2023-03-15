@@ -46,6 +46,7 @@ class _NullInjector implements Injector {
  */
 export abstract class Injector {
   static THROW_IF_NOT_FOUND = _THROW_IF_NOT_FOUND;
+
   static NULL: Injector = new _NullInjector();
 
   /**
@@ -56,9 +57,4 @@ export abstract class Injector {
    * - Returns the `notFoundValue` otherwise
    */
   abstract get<T>(token: Type<T> | InjectionToken<T>, notFoundValue?: T): T;
-  /**
-   * @deprecated from v4.0.0 use Type<T> or InjectionToken<T>
-   * @suppress {duplicate}
-   */
-  abstract get(token: any, notFoundValue?: any): any;
 }
