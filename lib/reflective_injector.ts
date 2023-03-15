@@ -9,11 +9,12 @@
 import { Injector, THROW_IF_NOT_FOUND } from './injector';
 import { Self, SkipSelf } from './metadata';
 import { Provider } from './provider';
+import { ReflectiveDependency } from './reflective_dependency';
 import { cyclicDependencyError, instantiationError, noProviderError, outOfBoundsError } from './reflective_errors';
 import { ReflectiveKey } from './reflective_key';
 import { ResolvedReflectiveProvider, resolveReflectiveProviders } from './reflective_provider';
 
-import { ReflectiveDependency, ResolvedReflectiveFactory } from './reflective_provider_resolver';
+import { ResolvedReflectiveFactory } from './reflective_provider_resolver';
 
 // Threshold for the dynamic version
 const UNDEFINED = new Object();

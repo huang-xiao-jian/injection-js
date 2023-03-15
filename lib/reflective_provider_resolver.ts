@@ -15,18 +15,7 @@ import { Inject, Optional, Self, SkipSelf } from './metadata';
 import { isClassProvider, isExistingProvider, isFactoryProvider, NormalizedProvider, Provider } from './provider';
 import { noAnnotationError } from './reflective_errors';
 import { ReflectiveKey } from './reflective_key';
-
-/**
- * `Dependency` is used by the framework to extend DI.
- * This is internal to Angular and should not be used directly.
- */
-export class ReflectiveDependency {
-  constructor(public key: ReflectiveKey, public optional: boolean, public visibility: Self | SkipSelf | null) {}
-
-  static fromKey(key: ReflectiveKey): ReflectiveDependency {
-    return new ReflectiveDependency(key, false, null);
-  }
-}
+import { ReflectiveDependency } from './reflective_dependency';
 
 const _EMPTY_LIST: any[] = [];
 
@@ -94,7 +83,7 @@ export class ResolvedReflectiveFactory {
 
 export class ReflectiveProviderResolver {
   /**
-   * Converts the {@link Provider} into {@link ResolvedProvider}.
+   * Converts the Provider into ResolvedProvider.
    *
    * {@link Injector} internally only uses {@link ResolvedProvider}, {@link Provider} contains
    * convenience provider syntax.
