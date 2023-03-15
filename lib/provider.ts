@@ -238,22 +238,3 @@ export function isExistingProvider(cls: NormalizedProvider): cls is ExistingProv
 export function isFactoryProvider(cls: NormalizedProvider): cls is FactoryProvider {
   return 'useFactory' in cls;
 }
-
-export class ProviderNormalizer {
-  /**
-   * TODO - InvalidProviderError
-   * TODO - Array<Provider>
-   */
-  static normalize(providers: Provider[]): NormalizedProvider[] {
-    return providers.map((provider) => {
-      if ('provide' in provider) {
-        return provider;
-      }
-
-      return {
-        provide: provider,
-        useClass: provider,
-      };
-    });
-  }
-}

@@ -12,9 +12,9 @@ import { Provider } from './provider';
 import { ReflectiveDependency } from './reflective_dependency';
 import { cyclicDependencyError, instantiationError, noProviderError, outOfBoundsError } from './reflective_errors';
 import { ReflectiveKey } from './reflective_key';
-import { ResolvedReflectiveProvider, resolveReflectiveProviders } from './reflective_provider';
+import { resolveReflectiveProviders } from './reflective_provider';
 
-import { ResolvedReflectiveFactory } from './reflective_provider_resolver';
+import { ResolvedReflectiveFactory, ResolvedReflectiveProvider } from './reflective_provider_resolver';
 
 // Threshold for the dynamic version
 const UNDEFINED = new Object();
