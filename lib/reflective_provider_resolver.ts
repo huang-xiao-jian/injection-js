@@ -16,6 +16,7 @@ import { isClassProvider, isExistingProvider, isFactoryProvider, NormalizedProvi
 import { noAnnotationError } from './reflective_errors';
 import { ReflectiveKey } from './reflective_key';
 import { ReflectiveDependency } from './reflective_dependency';
+import { ResolvedReflectiveFactory } from './reflective_factory';
 
 const _EMPTY_LIST: any[] = [];
 
@@ -63,25 +64,18 @@ export class ResolvedReflectiveProvider_ implements ResolvedReflectiveProvider {
   }
 }
 
-/**
- * An internal resolved representation of a factory function created by resolving {@link
- * Provider}.
- * @experimental
- */
-export class ResolvedReflectiveFactory {
-  constructor(
-    /**
-     * Factory function which can return an instance of an object represented by a key.
-     */
-    public factory: Function,
-    /**
-     * Arguments (dependencies) to the `factory` function.
-     */
-    public dependencies: ReflectiveDependency[]
-  ) {}
-}
-
 export class ReflectiveProviderResolver {
+  /**
+   * Shallow clone the {@link ResolvedReflectiveProvider}.
+   *
+   * Only occur within multi merge scenario
+   *
+   */
+  static shallow(provider: ResolvedReflectiveProvider): ResolvedReflectiveProvider {
+    // 后续合并动作不应该影响原始的 ReflectiveProvider，因而需要进行浅克隆，务必注意
+    return new ResolvedReflectiveProvider_(provider.key, provider.resolvedFactories.slice(), provider.multiProvider);
+  }
+
   /**
    * Converts the Provider into ResolvedProvider.
    *
@@ -94,17 +88,6 @@ export class ReflectiveProviderResolver {
       [resolveReflectiveFactory(provider)],
       provider.multi || false
     );
-  }
-
-  /**
-   * Shallow clone the {@link ResolvedReflectiveProvider}.
-   *
-   * Only occur within multi merge scenario
-   *
-   */
-  static shallow(provider: ResolvedReflectiveProvider): ResolvedReflectiveProvider {
-    // 后续合并动作不应该影响原始的 ReflectiveProvider，因而需要进行浅克隆，务必注意
-    return new ResolvedReflectiveProvider_(provider.key, provider.resolvedFactories.slice(), provider.multiProvider);
   }
 }
 

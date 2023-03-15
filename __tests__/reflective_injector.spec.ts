@@ -21,7 +21,6 @@ import {
   forwardRef,
 } from '../lib';
 import { ReflectiveInjector_ } from '../lib/reflective_injector';
-import { ResolvedReflectiveProvider_ } from '../lib/reflective_provider_resolver';
 import { getOriginalError } from '../lib/facade/errors';
 
 import { isPresent, stringify } from '../lib/facade/lang';
