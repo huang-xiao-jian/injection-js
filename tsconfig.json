@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "module": "esnext",
     "sourceMap": true,
     "inlineSources": true,
@@ -11,8 +11,8 @@
     "outDir": "./dist",
     "moduleResolution": "node",
     "lib": [
-      "es2015",
-      "dom"
+      "dom",
+      "esnext"
     ],
     "strict": true,
     "esModuleInterop": true,
@@ -20,8 +20,5 @@
   },
   "files": [
     "./lib/index.ts"
-  ],
-  "angularCompilerOptions": {
-    "skipTemplateCodegen": true
-  }
+  ]
 }

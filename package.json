@@ -11,35 +11,24 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mgechev/injection-js.git"
-  },
-  "dependencies": {
-    "tslib": "^2.0.0"
+    "url": "git@github.com:huang-xiao-jian/injection-js.git"
   },
   "devDependencies": {
-    "@types/jasmine": "^4.0.3",
-    "@types/node": "^17.0.24",
-    "@typescript-eslint/eslint-plugin": "^5.19.0",
-    "@typescript-eslint/parser": "^5.19.0",
-    "eslint": "^8.13.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "jasmine": "^4.1.0",
-    "prettier": "^2.6.2",
+    "@abraham/reflection": "^0.12.0",
+    "@types/node": "^18.15.3",
+    "@typescript-eslint/eslint-plugin": "^5.55.0",
+    "@typescript-eslint/parser": "^5.55.0",
+    "eslint": "^8.36.0",
+    "eslint-config-prettier": "^8.7.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.4",
     "reflect-metadata": "^0.1.13",
-    "rimraf": "^3.0.2",
-    "rollup": "^2.70.2",
-    "typescript": "^4.6.3"
+    "typescript": "^4.9.5"
   },
-  "scripts": {
-    "prebuild": "npm run verify && npm t",
-    "build": "rimraf dist && tsc && rollup -c rollup.config.js -i dist/index.js > dist/injection.bundle.js && node tools/copy.js",
-    "pretest": "rimraf dist/test && tsc -p tsconfig-es5.test.json && tsc -p tsconfig-es2015.test.json",
-    "test": "jasmine",
-    "format": "eslint -c .eslintrc.js lib/**/*.ts --fix && eslint -c .eslintrc.js test/*.ts --fix",
-    "lint": "eslint -c .eslintrc.js lib/**/*.ts && eslint -c .eslintrc.js test/*.ts",
-    "verify": "tsc -p tools && npm run format && npm run lint"
+  "dependencies": {
+    "tslib": "^2.5.0"
   },
+  "scripts": {},
   "keywords": [
     "DI",
     "dependency",
