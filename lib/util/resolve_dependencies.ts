@@ -3,6 +3,19 @@ import { ResolvedReflectiveProvider, ResolvedReflectiveFactory, ReflectiveDepend
 
 type Constructor = new (...args: any[]) => any;
 
+function resolver(cls: Constructor, deps: Set<Constructor>) {
+  if (deps.has(cls)) return;
+
+  deps.add(cls);
+
+  // resolve all dependencies of the provided class and run the `resolver()` function
+  // on their constructor functions.
+  ReflectiveInjector.resolve([cls])
+    .reduce((a, x: ResolvedReflectiveProvider) => a.concat(x.resolvedFactories), [] as ResolvedReflectiveFactory[])
+    .reduce((a, r: ResolvedReflectiveFactory) => a.concat(r.dependencies), [] as ReflectiveDependency[])
+    .forEach((d) => resolver(d.key.token as Constructor, deps));
+}
+
 /**
  * This utility function receives a spread of injectable classes
  * and returns an array of all their dependencies. Also resolves
@@ -50,21 +63,8 @@ type Constructor = new (...args: any[]) => any;
 export function resolveDependencies(...inputs: Constructor[]) {
   const deps = new Set<Constructor>();
 
-  function resolver(klass: Constructor) {
-    if (deps.has(klass)) return;
-
-    deps.add(klass);
-
-    // resolve all dependencies of the provided class and run the `resolver()` function
-    // on their constructor functions.
-    ReflectiveInjector.resolve([klass])
-      .reduce((a, x: ResolvedReflectiveProvider) => a.concat(x.resolvedFactories), [] as ResolvedReflectiveFactory[])
-      .reduce((a, r: ResolvedReflectiveFactory) => a.concat(r.dependencies), [] as ReflectiveDependency[])
-      .forEach((d) => resolver(d.key.token as Constructor));
-  }
-
   for (const input of inputs) {
-    resolver(input);
+    resolver(input, deps);
   }
 
   return Array.from(deps);

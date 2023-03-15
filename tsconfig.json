@@ -10,15 +10,9 @@
     "declaration": true,
     "outDir": "./dist",
     "moduleResolution": "node",
-    "lib": [
-      "dom",
-      "esnext"
-    ],
+    "lib": ["dom", "esnext"],
     "strict": true,
     "esModuleInterop": true,
     "importHelpers": true
-  },
-  "files": [
-    "./lib/index.ts"
-  ]
+  }
 }
