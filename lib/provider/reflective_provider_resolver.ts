@@ -6,17 +6,17 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { reflector } from './reflection/reflection';
-import { Type } from './facade/type';
+import { reflector } from '../reflection/reflection';
+import { Type } from '../facade/type';
 
-import { resolveForwardRef } from './forward_ref';
-import { InjectionToken } from './injection_token';
-import { Inject, Optional, Self, SkipSelf } from './metadata';
+import { resolveForwardRef } from '../forward_ref';
+import { InjectionToken } from '../injection_token';
+import { Inject, Optional, Self, SkipSelf } from '../metadata';
 import { isClassProvider, isExistingProvider, isFactoryProvider, NormalizedProvider, Provider } from './provider';
-import { noAnnotationError } from './reflective_errors';
-import { ReflectiveKey } from './reflective_key';
-import { ReflectiveDependency } from './reflective_dependency';
-import { ResolvedReflectiveFactory } from './reflective_factory';
+import { noAnnotationError } from '../reflective_errors';
+import { ReflectiveKey } from '../reflective_key';
+import { ReflectiveDependency } from '../dependency';
+import { ResolvedReflectiveFactory } from '../reflective_factory';
 
 const _EMPTY_LIST: any[] = [];
 

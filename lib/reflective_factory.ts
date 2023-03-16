@@ -1,4 +1,4 @@
-import { ReflectiveDependency } from './reflective_dependency';
+import { ReflectiveDependency } from './dependency/reflective_dependency';
 
 /**
  * An internal resolved representation of a factory function created by resolving {@link

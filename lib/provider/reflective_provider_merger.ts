@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { MixingMultiProvidersWithRegularProvidersError } from './reflective_errors';
+import { MixingMultiProvidersWithRegularProvidersError } from '../reflective_errors';
 import { ReflectiveProviderResolver, ResolvedReflectiveProvider } from './reflective_provider_resolver';
 
 /**

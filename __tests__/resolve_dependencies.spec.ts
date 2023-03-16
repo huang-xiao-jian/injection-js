@@ -1,6 +1,11 @@
-import { resolveDependencies } from '../lib/util/resolve_dependencies';
-import { Injectable, Optional, Inject, Provider } from '../lib';
-import { ReflectiveInjector } from '../lib/reflective_injector';
+import {
+  Inject,
+  Injectable,
+  Optional,
+  Provider,
+  ReflectiveDependencyResolver,
+  ReflectiveInjector,
+} from '../lib';
 
 class Engine {}
 
@@ -47,7 +52,7 @@ describe('resolveDependencies', function () {
   });
 
   it('should resolve direct dependencies', function () {
-    deps = resolveDependencies(Dashboard);
+    deps = ReflectiveDependencyResolver.resolve(Dashboard);
 
     expect(deps).toEqual([Dashboard, DashboardSoftware]);
 
@@ -57,7 +62,7 @@ describe('resolveDependencies', function () {
   });
 
   it('should resolve dependencies of dependencies', function () {
-    deps = resolveDependencies(CarWithDashboard);
+    deps = ReflectiveDependencyResolver.resolve(CarWithDashboard);
 
     expect(deps).toEqual([CarWithDashboard, Engine, Dashboard, DashboardSoftware]);
 
@@ -67,7 +72,7 @@ describe('resolveDependencies', function () {
   });
 
   it('should resolve optional dependencies', function () {
-    deps = resolveDependencies(CarWithOptionalEngine);
+    deps = ReflectiveDependencyResolver.resolve(CarWithOptionalEngine);
 
     expect(deps).toEqual([CarWithOptionalEngine, Engine]);
 
@@ -77,7 +82,7 @@ describe('resolveDependencies', function () {
   });
 
   it('should resolve re-provided dependencies', function () {
-    deps = resolveDependencies(CarWithInject);
+    deps = ReflectiveDependencyResolver.resolve(CarWithInject);
 
     expect(deps).toEqual([CarWithInject, TurboEngine]);
 

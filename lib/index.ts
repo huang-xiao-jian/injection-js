@@ -18,11 +18,24 @@ export { forwardRef, resolveForwardRef, ForwardRefFn } from './forward_ref';
 
 export { Injector } from './injector';
 export { ReflectiveInjector } from './reflective_injector';
-export { Provider, TypeProvider, ValueProvider, ClassProvider, ExistingProvider, FactoryProvider } from './provider';
-export { ResolvedReflectiveProvider } from './reflective_provider_resolver';
+export {
+  Provider,
+  TypeProvider,
+  ValueProvider,
+  ClassProvider,
+  ExistingProvider,
+  FactoryProvider,
+  ResolvedReflectiveProvider,
+} from './provider';
+export * from './dependency';
 export { ResolvedReflectiveFactory } from './reflective_factory';
 export { ReflectiveKey } from './reflective_key';
 export { InjectionToken } from './injection_token';
-export { Class, TypeDecorator, makeDecorator, makeParamDecorator, makePropDecorator } from './util/decorators';
-export { resolveDependencies } from './util/resolve_dependencies';
+export {
+  Class,
+  TypeDecorator,
+  makeDecorator,
+  makeParamDecorator,
+  makePropDecorator,
+} from './util/decorators';
 export { Type, isType } from './facade/type';

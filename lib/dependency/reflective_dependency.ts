@@ -6,8 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Self, SkipSelf } from './metadata';
-import { ReflectiveKey } from './reflective_key';
+import { Self, SkipSelf } from '../metadata';
+import { ReflectiveKey } from '../reflective_key';
 
 /**
  * `Dependency` is used by the framework to extend DI.
