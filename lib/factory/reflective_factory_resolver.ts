@@ -49,8 +49,9 @@ export function constructDependencies(
   typeOrFunc: any,
   dependencies?: any[],
 ): ReflectiveDependency[] {
+  // useFactory 未声明依赖，直接判定为无依赖
   if (!dependencies) {
-    return _dependenciesFor(typeOrFunc);
+    return _EMPTY_LIST;
   } else {
     // TODO - 为什么转化为数组
     const params: any[][] = dependencies.map((t) => [t]);
