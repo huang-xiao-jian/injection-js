@@ -235,8 +235,11 @@ export function noAnnotationError(typeOrFunc: Type<any> | Function, params: any[
  * ```
  * @stable
  */
-export function outOfBoundsError(index: number) {
-  return Error(`Index ${index} is out-of-bounds.`);
+
+export class OutOfBoundsError extends Error {
+  constructor(index: number) {
+    super(`Index ${index} is out-of-bounds.`);
+  }
 }
 
 // TODO: add a working example after alpha38 is released

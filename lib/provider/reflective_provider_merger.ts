@@ -5,9 +5,9 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-
 import { MixingMultiProvidersWithRegularProvidersError } from '../reflective_errors';
-import { ReflectiveProviderResolver, ResolvedReflectiveProvider } from './reflective_provider_resolver';
+import { ResolvedReflectiveProvider } from './reflective_provider';
+import { ReflectiveProviderResolver } from './reflective_provider_resolver';
 
 /**
  * Merges a list of ResolvedProviders into a list where
@@ -17,7 +17,7 @@ import { ReflectiveProviderResolver, ResolvedReflectiveProvider } from './reflec
 export class ResolvedReflectiveProvidersMerger {
   static merge(
     providers: ResolvedReflectiveProvider[],
-    normalizedProvidersMap: Map<number, ResolvedReflectiveProvider> = new Map()
+    normalizedProvidersMap: Map<number, ResolvedReflectiveProvider> = new Map(),
   ): Map<number, ResolvedReflectiveProvider> {
     for (let i = 0; i < providers.length; i++) {
       const provider = providers[i];

@@ -5,64 +5,27 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-
-import { reflector } from '../reflection/reflection';
+import { ReflectiveDependency } from '../dependency';
 import { Type } from '../facade/type';
-
 import { resolveForwardRef } from '../forward_ref';
 import { InjectionToken } from '../injection_token';
 import { Inject, Optional, Self, SkipSelf } from '../metadata';
-import { isClassProvider, isExistingProvider, isFactoryProvider, NormalizedProvider, Provider } from './provider';
+import { reflector } from '../reflection/reflection';
 import { noAnnotationError } from '../reflective_errors';
-import { ReflectiveKey } from '../reflective_key';
-import { ReflectiveDependency } from '../dependency';
 import { ResolvedReflectiveFactory } from '../reflective_factory';
+import { ReflectiveKey } from '../reflective_key';
+import {
+  NormalizedProvider,
+  Provider,
+  isClassProvider,
+  isExistingProvider,
+  isFactoryProvider,
+} from './provider';
+import { ProviderNormalizer } from './provider_normalizer';
+import { ResolvedReflectiveProvider, ResolvedReflectiveProviderImpl } from './reflective_provider';
+import { ResolvedReflectiveProvidersMerger } from './reflective_provider_merger';
 
 const _EMPTY_LIST: any[] = [];
-
-/**
- * An internal resolved representation of a {@link Provider} used by the {@link Injector}.
- *
- * It is usually created automatically by `Injector.resolveAndCreate`.
- *
- * It can be created manually, as follows:
- *
- * ### Example ([live demo](http://plnkr.co/edit/RfEnhh8kUEI0G3qsnIeT?p%3Dpreview&p=preview))
- *
- * ```typescript
- * var resolvedProviders = Injector.resolve([{ provide: 'message', useValue: 'Hello' }]);
- * var injector = Injector.fromResolvedProviders(resolvedProviders);
- *
- * expect(injector.get('message')).toEqual('Hello');
- * ```
- *
- * @experimental
- */
-export interface ResolvedReflectiveProvider {
-  /**
-   * A key, usually a `Type<any>`.
-   */
-  key: ReflectiveKey;
-
-  /**
-   * Factory function which can return an instance of an object represented by a key.
-   */
-  resolvedFactories: ResolvedReflectiveFactory[];
-
-  /**
-   * Indicates if the provider is a multi-provider or a regular provider.
-   */
-  multiProvider: boolean;
-}
-
-// tslint:disable-next-line:class-name
-export class ResolvedReflectiveProvider_ implements ResolvedReflectiveProvider {
-  constructor(public key: ReflectiveKey, public resolvedFactories: ResolvedReflectiveFactory[], public multiProvider: boolean) {}
-
-  get resolvedFactory(): ResolvedReflectiveFactory {
-    return this.resolvedFactories[0];
-  }
-}
 
 export class ReflectiveProviderResolver {
   /**
@@ -73,21 +36,39 @@ export class ReflectiveProviderResolver {
    */
   static shallow(provider: ResolvedReflectiveProvider): ResolvedReflectiveProvider {
     // 后续合并动作不应该影响原始的 ReflectiveProvider，因而需要进行浅克隆，务必注意
-    return new ResolvedReflectiveProvider_(provider.key, provider.resolvedFactories.slice(), provider.multiProvider);
+    return new ResolvedReflectiveProviderImpl(
+      provider.key,
+      provider.resolvedFactories.slice(),
+      provider.multiProvider,
+    );
   }
 
   /**
    * Converts the Provider into ResolvedProvider.
    *
-   * {@link Injector} internally only uses {@link ResolvedProvider}, {@link Provider} contains
+   * Injector internally only uses ResolvedProvider, Provider contains
    * convenience provider syntax.
    */
   static resolve(provider: NormalizedProvider): ResolvedReflectiveProvider {
-    return new ResolvedReflectiveProvider_(
+    return new ResolvedReflectiveProviderImpl(
       ReflectiveKey.get(provider.provide),
       [resolveReflectiveFactory(provider)],
-      provider.multi || false
+      provider.multi || false,
     );
+  }
+
+  /**
+   * Resolve a list of Providers.
+   */
+  static batchResolve(providers: Provider[]): ResolvedReflectiveProvider[] {
+    // NormalizeProvider 作用于接入层，标准化 Provider 结构
+    const normalized = ProviderNormalizer.normalize(providers);
+    // 解析Provider 工厂函数 + 函数依赖，可实例化预备
+    const resolved = normalized.map((provider) => this.resolve(provider));
+    // 相同 token 进行合并
+    const resolvedProviderMap = ResolvedReflectiveProvidersMerger.merge(resolved);
+
+    return Array.from(resolvedProviderMap.values());
   }
 }
 
@@ -118,7 +99,10 @@ function resolveReflectiveFactory(provider: NormalizedProvider): ResolvedReflect
 /**
  * Factory 提取依赖
  */
-export function constructDependencies(typeOrFunc: any, dependencies?: any[]): ReflectiveDependency[] {
+export function constructDependencies(
+  typeOrFunc: any,
+  dependencies?: any[],
+): ReflectiveDependency[] {
   if (!dependencies) {
     return _dependenciesFor(typeOrFunc);
   } else {
@@ -144,7 +128,11 @@ function _dependenciesFor(typeOrFunc: any): ReflectiveDependency[] {
   return params.map((p) => _extractToken(typeOrFunc, p, params));
 }
 
-function _extractToken(typeOrFunc: any, metadata: any[] | any, params: any[][]): ReflectiveDependency {
+function _extractToken(
+  typeOrFunc: any,
+  metadata: any[] | any,
+  params: any[][],
+): ReflectiveDependency {
   let token: any = null;
   let optional = false;
 
@@ -191,6 +179,10 @@ function _extractToken(typeOrFunc: any, metadata: any[] | any, params: any[][]):
   }
 }
 
-function _createDependency(token: any, optional: boolean, visibility: Self | SkipSelf | null): ReflectiveDependency {
+function _createDependency(
+  token: any,
+  optional: boolean,
+  visibility: Self | SkipSelf | null,
+): ReflectiveDependency {
   return new ReflectiveDependency(ReflectiveKey.get(token), optional, visibility);
 }

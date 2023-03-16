@@ -7,13 +7,12 @@
  */
 import { ReflectiveDependency } from '../dependency/reflective_dependency';
 import { Self, SkipSelf } from '../metadata';
-import { ResolvedReflectiveProvider, resolveReflectiveProviders } from '../provider';
-import { Provider } from '../provider/provider';
+import { Provider, ReflectiveProviderResolver, ResolvedReflectiveProvider } from '../provider';
 import {
+  OutOfBoundsError,
   cyclicDependencyError,
   instantiationError,
   noProviderError,
-  outOfBoundsError,
 } from '../reflective_errors';
 import { ResolvedReflectiveFactory } from '../reflective_factory';
 import { ReflectiveKey } from '../reflective_key';
@@ -90,7 +89,7 @@ export abstract class ReflectiveInjector implements Injector {
    * See {@link ReflectiveInjector#fromResolvedProviders} for more info.
    */
   static resolve(providers: Provider[]): ResolvedReflectiveProvider[] {
-    return resolveReflectiveProviders(providers);
+    return ReflectiveProviderResolver.batchResolve(providers);
   }
 
   /**
@@ -340,7 +339,7 @@ export class ReflectiveInjector_ implements ReflectiveInjector {
 
   getProviderAtIndex(index: number): ResolvedReflectiveProvider {
     if (index < 0 || index >= this._providers.length) {
-      throw outOfBoundsError(index);
+      throw new OutOfBoundsError(index);
     }
     return this._providers[index];
   }
