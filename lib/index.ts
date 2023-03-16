@@ -27,7 +27,7 @@ export {
   ResolvedReflectiveProvider,
 } from './provider';
 export * from './dependency';
-export { ResolvedReflectiveFactory } from './reflective_factory';
+export { ResolvedReflectiveFactory } from './factory/reflective_factory';
 export { ReflectiveKey } from './reflective_key';
 export { InjectionToken } from './injection_token';
 export {

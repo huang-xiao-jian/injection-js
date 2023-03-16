@@ -1,6 +1,6 @@
+import { ResolvedReflectiveFactory } from '../factory/reflective_factory';
 import { ReflectiveInjector } from '../injector/reflective_injector';
 import { ResolvedReflectiveProvider } from '../provider';
-import { ResolvedReflectiveFactory } from '../reflective_factory';
 import { ReflectiveDependency } from './reflective_dependency';
 
 type Constructor = new (...args: any[]) => any;

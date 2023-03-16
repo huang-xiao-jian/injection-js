@@ -1,4 +1,4 @@
-import { ResolvedReflectiveFactory } from '../reflective_factory';
+import { ResolvedReflectiveFactory } from '../factory/reflective_factory';
 import { ReflectiveKey } from '../reflective_key';
 
 /**

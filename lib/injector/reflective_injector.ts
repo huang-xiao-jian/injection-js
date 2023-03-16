@@ -6,6 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { ReflectiveDependency } from '../dependency/reflective_dependency';
+import { ResolvedReflectiveFactory } from '../factory/reflective_factory';
 import { Self, SkipSelf } from '../metadata';
 import { Provider, ReflectiveProviderResolver, ResolvedReflectiveProvider } from '../provider';
 import {
@@ -14,7 +15,6 @@ import {
   instantiationError,
   noProviderError,
 } from '../reflective_errors';
-import { ResolvedReflectiveFactory } from '../reflective_factory';
 import { ReflectiveKey } from '../reflective_key';
 import { THROW_IF_NOT_FOUND, UNDEFINED } from '../util/preset';
 import { Injector } from './injector';
