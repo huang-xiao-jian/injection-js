@@ -186,7 +186,7 @@ export function invalidProviderError(provider: any) {
  * expect(() => Injector.resolveAndCreate([A])).toThrowError();
  * ```
  *
- * This error is also thrown when the class not marked with {@link Injectable} has parameter types.
+ * This error is also thrown when the class not marked with Injectable has parameter types.
  *
  * ```typescript
  * class B {}
