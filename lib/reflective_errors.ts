@@ -5,13 +5,11 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-
 import { wrappedError } from './facade/errors';
 import { ERROR_ORIGINAL_ERROR, getOriginalError } from './facade/errors';
 import { stringify } from './facade/lang';
 import { Type } from './facade/type';
-
-import { ReflectiveInjector } from './reflective_injector';
+import { ReflectiveInjector } from './injector/reflective_injector';
 import { ReflectiveKey } from './reflective_key';
 
 function findFirstClosedCycle(keys: any[]): any[] {
@@ -47,7 +45,7 @@ function injectionError(
   injector: ReflectiveInjector,
   key: ReflectiveKey,
   constructResolvingMessage: (this: InjectionError) => string,
-  originalError?: Error
+  originalError?: Error,
 ): InjectionError {
   const error = (originalError ? wrappedError('', originalError) : Error()) as InjectionError;
   error.addKey = addKey;
@@ -102,7 +100,10 @@ export function noProviderError(injector: ReflectiveInjector, key: ReflectiveKey
  *
  * Retrieving `A` or `B` throws a `CyclicDependencyError` as the graph above cannot be constructed.
  */
-export function cyclicDependencyError(injector: ReflectiveInjector, key: ReflectiveKey): InjectionError {
+export function cyclicDependencyError(
+  injector: ReflectiveInjector,
+  key: ReflectiveKey,
+): InjectionError {
   return injectionError(injector, key, function (this: InjectionError) {
     return `Cannot instantiate cyclic dependency!${constructResolvingPath(this.keys)}`;
   });
@@ -138,16 +139,18 @@ export function instantiationError(
   injector: ReflectiveInjector,
   originalException: any,
   originalStack: any,
-  key: ReflectiveKey
+  key: ReflectiveKey,
 ): InjectionError {
   return injectionError(
     injector,
     key,
     function (this: InjectionError) {
       const first = stringify(this.keys[0].token);
-      return `${getOriginalError(this).message}: Error during instantiation of ${first}!${constructResolvingPath(this.keys)}.`;
+      return `${
+        getOriginalError(this).message
+      }: Error during instantiation of ${first}!${constructResolvingPath(this.keys)}.`;
     },
-    originalException
+    originalException,
   );
 }
 
@@ -162,7 +165,9 @@ export function instantiationError(
  * ```
  */
 export function invalidProviderError(provider: any) {
-  return Error(`Invalid provider - only instances of Provider and Type are allowed, got: ${provider}`);
+  return Error(
+    `Invalid provider - only instances of Provider and Type are allowed, got: ${provider}`,
+  );
 }
 
 /**
@@ -212,7 +217,7 @@ export function noAnnotationError(typeOrFunc: Type<any> | Function, params: any[
       '). ' +
       "Make sure that all the parameters are decorated with Inject or have valid type annotations and that '" +
       stringify(typeOrFunc) +
-      "' is decorated with Injectable."
+      "' is decorated with Injectable.",
   );
 }
 

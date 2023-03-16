@@ -5,15 +5,20 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-
-import { Injector, THROW_IF_NOT_FOUND } from './injector';
-import { Self, SkipSelf } from './metadata';
-import { Provider } from './provider/provider';
-import { ReflectiveDependency } from './dependency/reflective_dependency';
-import { cyclicDependencyError, instantiationError, noProviderError, outOfBoundsError } from './reflective_errors';
-import { ResolvedReflectiveFactory } from './reflective_factory';
-import { ReflectiveKey } from './reflective_key';
-import { resolveReflectiveProviders, ResolvedReflectiveProvider } from './provider';
+import { ReflectiveDependency } from '../dependency/reflective_dependency';
+import { Self, SkipSelf } from '../metadata';
+import { ResolvedReflectiveProvider, resolveReflectiveProviders } from '../provider';
+import { Provider } from '../provider/provider';
+import {
+  cyclicDependencyError,
+  instantiationError,
+  noProviderError,
+  outOfBoundsError,
+} from '../reflective_errors';
+import { ResolvedReflectiveFactory } from '../reflective_factory';
+import { ReflectiveKey } from '../reflective_key';
+import { THROW_IF_NOT_FOUND } from '../util/preset';
+import { Injector } from './injector';
 
 // Threshold for the dynamic version
 const UNDEFINED = new Object();
@@ -145,7 +150,10 @@ export abstract class ReflectiveInjector implements Injector {
    * ```
    * @experimental
    */
-  static fromResolvedProviders(providers: ResolvedReflectiveProvider[], parent?: Injector): ReflectiveInjector {
+  static fromResolvedProviders(
+    providers: ResolvedReflectiveProvider[],
+    parent?: Injector,
+  ): ReflectiveInjector {
     // tslint:disable-next-line:no-use-before-declare
     return new ReflectiveInjector_(providers, parent);
   }
@@ -364,12 +372,17 @@ export class ReflectiveInjector_ implements ReflectiveInjector {
     }
   }
 
-  private _instantiate(provider: ResolvedReflectiveProvider, ResolvedReflectiveFactory: ResolvedReflectiveFactory): any {
+  private _instantiate(
+    provider: ResolvedReflectiveProvider,
+    ResolvedReflectiveFactory: ResolvedReflectiveFactory,
+  ): any {
     const factory = ResolvedReflectiveFactory.factory;
 
     let deps: any[];
     try {
-      deps = ResolvedReflectiveFactory.dependencies.map((dep) => this._getByReflectiveDependency(dep));
+      deps = ResolvedReflectiveFactory.dependencies.map((dep) =>
+        this._getByReflectiveDependency(dep),
+      );
     } catch (e: any) {
       if (e.addKey) {
         e.addKey(this, provider.key);
@@ -391,7 +404,11 @@ export class ReflectiveInjector_ implements ReflectiveInjector {
     return this._getByKey(dep.key, dep.visibility, dep.optional ? null : THROW_IF_NOT_FOUND);
   }
 
-  private _getByKey(key: ReflectiveKey, visibility: Self | SkipSelf | null, notFoundValue: any): any {
+  private _getByKey(
+    key: ReflectiveKey,
+    visibility: Self | SkipSelf | null,
+    notFoundValue: any,
+  ): any {
     // tslint:disable-next-line:no-use-before-declare
     if (key === INJECTOR_KEY) {
       return this;
@@ -434,7 +451,11 @@ export class ReflectiveInjector_ implements ReflectiveInjector {
   }
 
   /** @internal */
-  _getByKeyDefault(key: ReflectiveKey, notFoundValue: any, visibility: Self | SkipSelf | null): any {
+  _getByKeyDefault(
+    key: ReflectiveKey,
+    notFoundValue: any,
+    visibility: Self | SkipSelf | null,
+  ): any {
     let inj: Injector | null;
 
     if (visibility instanceof SkipSelf) {
@@ -461,7 +482,10 @@ export class ReflectiveInjector_ implements ReflectiveInjector {
   }
 
   get displayName(): string {
-    const providers = _mapProviders(this, (b: ResolvedReflectiveProvider) => ' "' + b.key.displayName + '" ').join(', ');
+    const providers = _mapProviders(
+      this,
+      (b: ResolvedReflectiveProvider) => ' "' + b.key.displayName + '" ',
+    ).join(', ');
     return `ReflectiveInjector(providers: [${providers}])`;
   }
 
