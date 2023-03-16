@@ -17,11 +17,8 @@ import {
 } from '../reflective_errors';
 import { ResolvedReflectiveFactory } from '../reflective_factory';
 import { ReflectiveKey } from '../reflective_key';
-import { THROW_IF_NOT_FOUND } from '../util/preset';
+import { THROW_IF_NOT_FOUND, UNDEFINED } from '../util/preset';
 import { Injector } from './injector';
-
-// Threshold for the dynamic version
-const UNDEFINED = new Object();
 
 /**
  * A ReflectiveDependency injection container used for instantiating objects and resolving
